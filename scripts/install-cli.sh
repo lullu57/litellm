@@ -17,7 +17,7 @@ set -eu
 
 # NOTE: before merging, this must stay as "litellm[cli]" to install from PyPI.
 LITELLM_PACKAGE="litellm[cli]"
-UV_VERSION="0.10.9"
+UV_VERSION="0.13.4"
 
 # ── colours ────────────────────────────────────────────────────────────────
 if [ -t 1 ]; then
