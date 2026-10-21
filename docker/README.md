@@ -9,7 +9,7 @@ This guide provides instructions for building and running the LiteLLM applicatio
 
 ## Building and Running the Application
 
-To build and run the application, you will use the `docker-compose.yml` file located in the root of the project. This file is configured to use the `Dockerfile.non_root` for a secure, non-root container environment.
+The root `docker-compose.yml` starts a pre-incident image pinned by digest. Use `compose.source.yml` to build checked-out source, or `docker-compose.hardened.yml` for the non-root hardening/QA build.
 
 ### 1. Set the Master Key
 
@@ -23,19 +23,26 @@ LITELLM_MASTER_KEY=your-secret-key
 
 Replace `your-secret-key` with a strong, randomly generated secret.
 
-### 2. Build and Run the Containers
+### 2. Run the Pinned Image or Build from Source
 
-Once you have set the `LITELLM_MASTER_KEY`, you can build and run the containers using the following command:
+The default stack uses the pre-incident LiteLLM v1.106.2 image pinned by digest.
+Once you have set `LITELLM_MASTER_KEY`, start it with:
 
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
 
-This command will:
+This starts the `litellm`, `litellm_db`, and `prometheus` services in detached mode.
+To build the checked-out source with the root Dockerfile instead, use the explicit override:
 
--   Build the Docker image using `Dockerfile.non_root`.
--   Start the `litellm`, `litellm_db`, and `prometheus` services in detached mode (`-d`).
--   The `--build` flag ensures that the image is rebuilt if there are any changes to the Dockerfile or the application code.
+```bash
+docker compose -f docker-compose.yml -f compose.source.yml up -d --build
+```
+
+The source override uses a local image tag and always builds it. Source-build validation
+remains outstanding: CI currently reports Python 3.15 is incompatible with the project's
+`>=3.10,<3.14` requirement. The pinned image path does not use that source build.
+The hardened stack below also keeps its own local image tag and build configuration.
 
 ### 3. Verifying the Application is Running
 
@@ -81,7 +88,7 @@ This setup:
 You should also verify offline Prisma behaviour with:
 
 ```bash
-docker run --rm --network none --entrypoint prisma ghcr.io/berriai/litellm:main-stable --version
+docker run --rm --network none --entrypoint prisma litellm-hardened:local --version
 ```
 
 This command should succeed (showing engine versions) even with `--network none`, confirming that Prisma binaries are available without network access.

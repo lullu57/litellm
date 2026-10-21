@@ -1,0 +1,8 @@
+services:
+  litellm:
+    image: litellm-source:local
+    pull_policy: build
+    build:
+      context: .
+      args:
+        target: runtime

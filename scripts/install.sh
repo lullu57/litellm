@@ -10,8 +10,8 @@
 set -eu
 
 # NOTE: before merging, this must stay as "litellm[proxy]" to install from PyPI.
-LITELLM_PACKAGE="litellm[proxy]"
-UV_VERSION="0.10.9"
+LITELLM_PACKAGE="litellm[proxy]!=1.107.0"
+UV_VERSION="0.13.4"
 
 # ── colours ────────────────────────────────────────────────────────────────
 if [ -t 1 ]; then
